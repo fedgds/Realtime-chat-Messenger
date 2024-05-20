@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\AccountPage;
 use App\Livewire\Auth\LoginPage;
 use App\Livewire\Auth\RegisterPage;
 use App\Livewire\Chat\Index;
@@ -31,4 +32,5 @@ Route::middleware('auth')->group(function () {
         auth()->logout();
         return redirect('/');
     });
+    Route::get('/account', AccountPage::class);
 });
