@@ -1,6 +1,6 @@
 <div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
     <section class="py-10 bg-gray-50 font-poppins dark:bg-gray-800 rounded-lg p-4">
-        <h1 style="font-family: cursive" class="text-center mb-5 text-5xl text-rose-600">Tài khoản</h1>
+        <h1 style="font-family: cursive" class="text-center mb-5 text-5xl text-blue-600">Tài khoản</h1>
         <form wire:submit.prevent='updateInfomation'>
             <div class="bg-white rounded-xl shadow p-4 sm:p-7 dark:bg-slate-900">
                 <h2 class="text-2xl font-bold text-black dark:text-white mb-2">

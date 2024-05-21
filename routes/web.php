@@ -6,6 +6,7 @@ use App\Livewire\Auth\RegisterPage;
 use App\Livewire\Chat\Chat;
 use App\Livewire\Chat\Index;
 use App\Livewire\HomePage;
+use App\Livewire\Users;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,4 +36,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', AccountPage::class);
     Route::get('/chat', Index::class)->name('chat.index');
     Route::get('/chat/{query}', Chat::class)->name('chat');
+
+    Route::get('/users', Users::class)->name('users');
 });

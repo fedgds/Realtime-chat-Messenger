@@ -24,6 +24,8 @@
   
               <a wire:navigate class="font-medium {{ request()->is('/')?'text-gray-900':'text-gray-500' }} py-3 md:py-6 dark:text-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/" aria-current="page">Trang chủ</a>
 
+              <a wire:navigate class="font-medium {{ request()->is('/users')?'text-gray-900':'text-gray-500' }} py-3 md:py-6 dark:text-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/users" aria-current="page">Mọi người</a>
+
               <a wire:navigate class="font-medium {{ request()->is('/chat')?'text-gray-900':'text-gray-500' }} py-3 md:py-6 dark:text-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/chat" aria-current="page">Trò chuyện</a>
   
               @guest
