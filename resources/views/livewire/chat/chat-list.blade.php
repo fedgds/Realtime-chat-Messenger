@@ -1,5 +1,32 @@
 <div
-    x-data="{type:'all'}"
+    x-data="{type:'all',query:@entangle('query')}"
+    x-init="
+
+    setTimeout(()=>{
+
+        // Tìm phần tử DOM có ID là 'conversation-' cộng với giá trị của biến 'query'
+        conversationElement = document.getElementById('conversation-'+query);
+
+        // Cuộn đến phần tử này nếu nó tồn tại
+        if(conversationElement)
+        {
+            conversationElement.scrollIntoView({'behavior':'smooth'});
+        }
+
+    },200); 
+
+    // Thiết lập kênh riêng tư với Laravel Echo để lắng nghe các sự kiện thời gian thực
+    Echo.private('users.{{Auth()->User()->id}}')
+    .notification((notification)=>{
+        // Kiểm tra loại thông báo
+        if(notification['type']== 'App\\Notifications\\MessageRead' || notification['type']== 'App\\Notifications\\MessageSent')
+        {
+            // Kích hoạt sự kiện 'refresh' trên Livewire để làm mới dữ liệu giao diện
+            window.Livewire.emit('refresh');
+        }
+    });
+
+    "
  class="flex flex-col transition-all h-full overflow-hidden">
     <header class="px-3 z-10 bg-white sticky top-0 w-full py-2">
         <div class="border-b justify-between flex items-center pb-2">
@@ -26,22 +53,26 @@
     <main class="overflow-y-scroll overflow-hidden grow h-full relative" style="contain:content">
         {{-- Chat list --}}
         <ul class="p-2 grid w-full space-y-2">
-            <li class="py-3 hover:bg-gray-50 rounded-2xl dark:hover:bg-gray-700/70 transition-colors duration-150 flex relative w-full cursor-pointer px-2">
-                <a href="#" class="shrink-0 w-20 h-20">
-                    {{-- @include('livewire.section.avatar') --}}
-                    <livewire:section.avatar>
+            @if ($conversations)
+                
+            @foreach ($conversations as $key=> $conversation)
+            <li 
+            id="conversation-{{$conversation->id}}" wire:key="{{$conversation->id}}"
+            class="pt-3 hover:bg-gray-50 rounded-2xl dark:hover:bg-gray-700/70 transition-colors duration-150 flex relative w-full cursor-pointer px-2 mb-1 border {{$conversation->id==$selectedConversation?->id ? 'bg-gray-200/70':''}}">
+                <a href="#" class="shrink-0 w-12 h-12">
+                    <img src="https://randomuser.me/api/portraits/women/{{$key}}.jpg" alt="image" class="w-10 h-10 rounded-full shadow-lg">
                 </a>
 
                 <aside class="grid grid-cols-12 w-full">
-                    <a href="" class="col-span-11 border-b pb-2 border-gray-200 relative overflow-hidden truncate leading-5 w-full flex-nowrap p-1">
+                    <a href="{{route('chat',$conversation->id)}}" class="col-span-11 border-b pb-2 border-gray-200 relative overflow-hidden truncate leading-5 w-full flex-nowrap p-1">
                         {{-- Name and date --}}
                         <div class="flex justify-between w-full items-center">
 
                             <h6 class="truncate font-medium tracking-wider text-gray-900">
-                                La Sang
+                                {{$conversation->getReceiver()->name}}
                             </h6>
 
-                            <small class="text-gray-700">1 giờ trước</small>
+                            <small class="text-gray-700">{{$conversation->messages?->last()?->created_at?->shortAbsoluteDiffForHumans()}}</small>
 
                         </div>
                         {{-- Message --}}
@@ -71,8 +102,7 @@
 
                     </a>
 
-                    {{-- Dropdown --}}
-                    <div class="col-span-1 flex flex-col text-center my-auto">
+                    <div class="col-span-1 flex flex-col text-center my-auto z-30">
                         <div align="right" width="48">
                             <button>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill w-5 h-5 text-gray-700" viewBox="0 0 16 16">
@@ -85,6 +115,11 @@
                     
                 </aside>
             </li>
+            @endforeach
+
+            @else
+                <li>Bạn chưa có cuộc trò chuyện nào</li>
+            @endif
         </ul>
     </main>
 </div>
