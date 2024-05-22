@@ -10,8 +10,6 @@ class ChatBox extends Component
     public $selectedConversation;
     public $body;
     public $loadedMessages;
-    protected $listeners = ['refresh' => '$refresh'];
-    
 
     public function loadMessages()
     {
