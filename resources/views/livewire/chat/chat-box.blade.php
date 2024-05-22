@@ -1,4 +1,29 @@
-<div class="w-full overflow-hidden">
+<div 
+    x-data="{
+        height:0,
+        conversationElement:document.getElementById('conversation'),
+        markAsRead:null
+    }"
+    x-init="
+            height= conversationElement.scrollHeight;
+            $nextTick(()=>conversationElement.scrollTop= height);
+
+
+            Echo.private('users.{{Auth()->User()->id}}')
+            .notification((notification)=>{
+                if(notification['type']== 'App\\Notifications\\MessageRead' && notification['conversation_id']== {{$this->selectedConversation->id}})
+                {
+
+                    markAsRead=true;
+                }
+            });
+    "
+    @scroll-bottom.window="
+    $nextTick(()=>conversationElement.scrollTop= conversationElement.scrollHeight
+    );
+    "
+
+    class="w-full overflow-hidden">
     <div class="border-b flex flex-col overflow-y-scroll grow h-full">
         {{-- header --}}
         <header class="w-full sticky inset-x-0 flex pb-[5px] pt-[5px] top-0 z-10 bg-white border-b " >
@@ -18,19 +43,33 @@
             </div>
         </header>
         {{-- body --}}
-        <main class="flex flex-col gap-3 p-2.5 overflow-y-auto  flex-grow overscroll-contain overflow-x-hidden w-full my-auto">
+        <main id="conversation" class="flex flex-col gap-3 p-2.5 overflow-y-auto  flex-grow overscroll-contain overflow-x-hidden w-full my-auto">
             @if ($loadedMessages)
+
+            @php
+                $previousMessage= null;
+            @endphp
 
             @foreach ($loadedMessages as $key=> $message)
 
-                <div @class([
+            @if ($key>0)
+
+            @php
+                $previousMessage= $loadedMessages->get($key-1)
+            @endphp
+                
+            @endif
+
+                <div 
+                wire:key="{{time().$key}}"
+                @class([
                     'max-w-[85%] md:max-w-[78%] flex w-auto gap-2 relative mt-2',
                     'ml-auto'=>$message->sender_id=== auth()->id(),
                 ])>
                     {{-- avatar --}}
                     <div @class([
                         'shrink-0',
-                        // 'invisible'=>$previousMessage?->sender_id==$message->sender_id,
+                        'invisible'=>$previousMessage?->sender_id==$message->sender_id,
                         'hidden'=>$message->sender_id === auth()->id()
                             ])>
                         <img src="https://randomuser.me/api/portraits/women/{{$selectedConversation->getReceiver()->id}}.jpg" alt="image" class="w-9 h-9 rounded-full shadow-lg">
@@ -52,26 +91,34 @@
                                 'text-white'=>$message->sender_id=== auth()->id(),
             
                                     ]) >
-                            5:25am
+                                {{$message->created_at->format('g:i a')}}
                             </p>
                             {{-- message status --}}
+                            @if ($message->sender_id=== auth()->id())
                             <div>
                                 {{-- double ticks --}}
-
+                                @if ($message->isRead())
+                                    
+                                
                                 <span @class('text-gray-200')>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-all" viewBox="0 0 16 16">
                                         <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"/>
                                         <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z"/>
                                     </svg>
                                 </span>
-
+                                
+                                @else
+                                
                                 {{-- single ticks --}}
-                                {{-- <span @class('text-gray-200')>
+                                <span @class('text-gray-200')>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
                                         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                                     </svg>
-                                </span> --}}
+                                </span>
+                                @endif
                             </div>
+                            @endif
+
                         </div>
                     </div>
 

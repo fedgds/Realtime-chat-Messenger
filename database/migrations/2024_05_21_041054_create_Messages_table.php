@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('sender_id')->references('id')->on('users');
             $table->foreign('receiver_id')->references('id')->on('users');
 
-            $table->boolean('read_at')->nullable();
+            $table->timestamp('read_at')->nullable();
 
             $table->timestamp('receiver_deleted_at')->nullable();
             $table->timestamp('sender_deleted_at')->nullable();

@@ -10,6 +10,8 @@ class ChatBox extends Component
     public $selectedConversation;
     public $body;
     public $loadedMessages;
+    protected $listeners = ['refresh' => '$refresh'];
+    
 
     public function loadMessages()
     {
@@ -32,6 +34,20 @@ class ChatBox extends Component
 
 
         $this->reset('body');
+
+        # Cuộn xuống tin nhắn vừa gửi
+        $this->dispatch('scroll-bottom');
+
+        # Gửi
+        $this->loadedMessages->push($createdMessage);
+
+        # Cập nhật cuộc đối thoại, làm lên đầu danh sách chat
+        $this->selectedConversation->updated_at = now();
+        $this->selectedConversation->save();
+
+        # Load lại danh sách chat
+        $this->dispatch('refresh')->to('chat.chat-list');
+
 
         // dd($this->body);
     }
