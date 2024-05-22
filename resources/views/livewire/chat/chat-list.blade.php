@@ -15,14 +15,11 @@
 
     },200); 
 
-    // Thiết lập kênh riêng tư với Laravel Echo để lắng nghe các sự kiện thời gian thực
     Echo.private('users.{{Auth()->User()->id}}')
     .notification((notification)=>{
-        // Kiểm tra loại thông báo
         if(notification['type']== 'App\\Notifications\\MessageRead' || notification['type']== 'App\\Notifications\\MessageSent')
         {
-            // Kích hoạt sự kiện 'refresh' trên Livewire để làm mới dữ liệu giao diện
-            window.Livewire.emit('refresh');
+            window.Livewire.dispatch('refresh');
         }
     });
 
@@ -44,8 +41,8 @@
             <button @click="type='all'" :class="{'bg-blue-100 border-0 text-black':type=='all'}" class="inline-flex justify-center items-center rounded-full gap-x-1 text-xs font-medium px-3 lg:px-5 py-1 lg:py-2.5 border">
                 Tất cả
             </button>
-            <button @click="type='deleted'" :class="{'bg-blue-100 border-0 text-black':type=='deleted'}" class="inline-flex justify-center items-center rounded-full gap-x-1 text-xs font-medium px-3 lg:px-5 py-1 lg:py-2.5 border">
-                Đã xóa
+            <button @click="type='friend'" :class="{'bg-blue-100 border-0 text-black':type=='friend'}" class="inline-flex justify-center items-center rounded-full gap-x-1 text-xs font-medium px-3 lg:px-5 py-1 lg:py-2.5 border">
+                Bạn bè
             </button>
         </div>
     </header>
@@ -123,8 +120,8 @@
                     <div class="col-span-1 flex flex-col text-center my-auto z-30">
                         <div align="right" width="48">
                             <button>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill w-5 h-5 text-gray-700" viewBox="0 0 16 16">
-                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical w-5 h-5 text-gray-700" viewBox="0 0 16 16">
+                                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                                 </svg>
                             </button>
                         </div>
